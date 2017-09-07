@@ -1,0 +1,21 @@
+Sub m1()
+    ' Cambiar Rango de Valores por los que se va a calcular | COL A:RUT COL B:DV
+    For i = 2 To 258
+    Range("B" & i).Value = dvrut(Range("A" & i).Value)
+    Next i
+End Sub
+
+Public Function dvrut(rut)
+' lo unico que no acepta son letras
+rut = Replace("0000" & rut, ".", "", 1)
+If InStr(1, rut, "-") > 0 Then rut = Left(rut, InStr(1, rut, "-") - 1)
+rut = Right(rut, 8)
+suma = 0
+For i = 1 To 8
+suma = suma + Val(Mid(rut, i, 1)) * Val(Mid("32765432", i, 1))
+Next i
+dv = 11 - (suma Mod 11)
+If dv = 10 Then dv = "K"
+If dv = 11 Then dv = 0
+dvrut = dv
+End Function

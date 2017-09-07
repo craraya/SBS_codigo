@@ -1,0 +1,140 @@
+Public largo As String
+Public Path0 As String
+Public Codcamp As String
+Sub main()
+'
+' Principal
+'
+    ' Inicializamos el largo de la hoja
+    Application.ScreenUpdating = False
+    Path0 = Application.ActiveWorkbook.Path
+    limpiaArchivo
+    getLargo
+    getCodcamp
+    actualizaControl
+    actualizaFilas
+    actualizaCarga
+    actualizaTabla
+    escribirFilas
+    escribirControl
+    escribirSeguimiento
+    Sheets("Arch Control").Select
+    
+End Sub
+Sub getCodcamp()
+    Sheets("Arch Control").Select
+    Codcamp = Range("C6").Value
+End Sub
+Sub getLargo()
+    Sheets("Datos").Select
+    Range("A3").Select
+    Selection.End(xlDown).Select
+    largo = ActiveCell.Row
+    Range("A5").Select
+End Sub
+Sub limpiaArchivo()
+'
+' Limpia las hojas "Filas" y "Carga_DDMM_LOCAL" para ser actualizadas
+'
+    Sheets("Filas").Select
+    Rows("5:5").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Delete Shift:=xlUp
+    Range("A5").Select
+    
+    Sheets("Carga_DDMM_LOCAL").Select
+    Rows("5:5").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Delete Shift:=xlUp
+    Range("A5").Select
+    
+End Sub
+Sub actualizaControl()
+'
+' Actualuza la hoja Arch_Control
+'
+    Sheets("Arch Control").Select
+    Range("C3").Value = Val(largo) - 2
+    Range("A5").Select
+End Sub
+Sub actualizaFilas()
+'
+' Actualiza la hoja Filas
+'
+    Sheets("Filas").Select
+    Rows("4:4").Select
+    Selection.Copy
+    Rows("4:" & largo).Select
+    ActiveSheet.Paste
+    Range("A5").Select
+End Sub
+Sub actualizaCarga()
+'
+' Actualiza la hoja Carga_DDMM_LOCAL
+'
+    Sheets("Carga_DDMM_LOCAL").Select
+    Rows("4:4").Select
+    Selection.Copy
+    Rows("4:" & largo).Select
+    ActiveSheet.Paste
+    Range("A5").Select
+End Sub
+Sub actualizaTabla()
+'
+' Actualiza la tabla dinámica
+'
+    Sheets("Tabla").Select
+    Range("A4").Select
+    ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="Datos!$A$2:$AE$" & largo _
+        , Version:=xlPivotTableVersion12)
+    ActiveSheet.PivotTables("Tabla dinámica1").PivotCache.Refresh
+End Sub
+Sub escribirFilas()
+'
+' Escribimos el archivo de carga
+'
+    Sheets("Filas").Select
+    Range("AA3:AA" & largo).Select
+    Selection.Copy
+    Sheets("Salida").Select
+    Range("A1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    :=False, Transpose:=False
+    
+    Open Path0 & "\" & Codcamp & ".dat" For Output As #1
+    For i = 1 To largo - 2
+        Print #1, Range("A" & i).Value
+        'Print #1, Replace(Range("A" & i).Value, vbCrLf, vbCr)
+    Next i
+    Close #1
+    'Range("A1:A" & largo).ClearContents
+End Sub
+Sub escribirControl()
+'
+' Escribimos el archivo de carga
+'
+    Sheets("Arch Control").Select
+    Open Path0 & "\" & Codcamp & ".ctr" For Output As #1
+    Print #1, Range("D11").Value
+    Close #1
+End Sub
+Sub escribirSeguimiento()
+'
+' Escribimos el archivo de carga
+'
+    Sheets("Carga_DDMM_LOCAL").Select
+    Range("O3:O" & largo).Select
+    Selection.Copy
+    Sheets("Salida").Select
+    Range("A1").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    :=False, Transpose:=False
+    
+    Open Path0 & "\" & Codcamp & " SEGUIMIENTO.dat" For Output As #1
+    For i = 1 To largo - 2
+        Print #1, Range("A" & i).Value
+    Next i
+    Close #1
+    Range("A1:A" & largo).ClearContents
+End Sub

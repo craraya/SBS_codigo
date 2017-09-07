@@ -1,0 +1,52 @@
+Public Ruta As String
+
+Sub Macro1()
+'
+' Macro1 Macro
+'
+    Application.DisplayAlerts = False
+    
+    Ruta = Application.ActiveWorkbook.Path
+    Windows("Consolida_Informacion.xlsm").Activate
+    
+    nom_arch = Sheets("Hoja1").Range("A3").Value
+    
+    Workbooks.Open Filename:=Ruta & "\" & nom_arch
+    Sheets("Hoja1").Select
+    Range("A1").Select
+    Range(Selection, ActiveCell.SpecialCells(xlLastCell)).Select
+    Selection.Copy
+    
+    Windows("Consolida_Informacion.xlsm").Activate
+    Sheets("Hoja2").Select
+    Range("A1").Select
+    'Selection.End(xlDown).Select
+    'ActiveCell.Offset(1, 0).Select
+    ActiveSheet.Paste
+    
+    Windows(nom_arch).Activate
+    Windows(nom_arch).Close
+    
+    For i = 4 To 32
+        Windows("Consolida_Informacion.xlsm").Activate
+        nom_arch = Sheets("Hoja1").Range("A" & i).Value
+        
+        Workbooks.Open Filename:=Ruta & "\" & nom_arch
+        Sheets("Hoja1").Select
+        Range("A1").Select
+        Range(Selection, ActiveCell.SpecialCells(xlLastCell)).Select
+        Selection.Copy
+        
+        Windows("Consolida_Informacion.xlsm").Activate
+        Sheets("Hoja2").Select
+        Range("A1").Select
+        Selection.End(xlDown).Select
+        ActiveCell.Offset(1, 0).Select
+        ActiveSheet.Paste
+        
+        Windows(nom_arch).Activate
+        Windows(nom_arch).Close
+    Next i
+    
+End Sub
+

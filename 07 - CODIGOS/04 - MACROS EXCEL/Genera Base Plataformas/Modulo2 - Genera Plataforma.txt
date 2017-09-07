@@ -1,0 +1,117 @@
+Sub TodasLasPlataformas()
+    '--------------------------------------- Revisar que esten todas las plataformas
+    CreaHojaPlat ("PLAT. ANTOFAGASTA")
+    CreaHojaPlat ("PLAT. CONCEPCION")
+    CreaHojaPlat ("PLAT. COPIAPO")
+    CreaHojaPlat ("PLAT. CURICO")
+    CreaHojaPlat ("PLAT. INVALIDA")
+    CreaHojaPlat ("PLAT. IQUIQUE")
+    CreaHojaPlat ("PLAT. LA SERENA")
+    CreaHojaPlat ("PLAT. OSORNO")
+    CreaHojaPlat ("PLAT. PUERTO MONTT")
+    CreaHojaPlat ("PLAT. PUNTA ARENAS")
+    CreaHojaPlat ("PLAT. QUILLOTA")
+    CreaHojaPlat ("PLAT. RANCAGUA")
+    CreaHojaPlat ("PLAT. TALCA")
+    CreaHojaPlat ("PLAT. TEMUCO")
+    CreaHojaPlat ("PLAT. VALPARAISO")
+    CreaHojaPlat ("PLAT. VINA DEL MAR")
+    CreaHojaPlat ("PLATAFORMA 1")
+    CreaHojaPlat ("PLATAFORMA 10")
+    CreaHojaPlat ("PLATAFORMA 2")
+    CreaHojaPlat ("Plataforma Central")
+    'CreaHoja ("(en blanco)")
+    GuardaHojaPlat ("PLAT. ANTOFAGASTA")
+    GuardaHojaPlat ("PLAT. CONCEPCION")
+    GuardaHojaPlat ("PLAT. COPIAPO")
+    GuardaHojaPlat ("PLAT. CURICO")
+    GuardaHojaPlat ("PLAT. INVALIDA")
+    GuardaHojaPlat ("PLAT. IQUIQUE")
+    GuardaHojaPlat ("PLAT. LA SERENA")
+    GuardaHojaPlat ("PLAT. OSORNO")
+    GuardaHojaPlat ("PLAT. PUERTO MONTT")
+    GuardaHojaPlat ("PLAT. PUNTA ARENAS")
+    GuardaHojaPlat ("PLAT. QUILLOTA")
+    GuardaHojaPlat ("PLAT. RANCAGUA")
+    GuardaHojaPlat ("PLAT. TALCA")
+    GuardaHojaPlat ("PLAT. TEMUCO")
+    GuardaHojaPlat ("PLAT. VALPARAISO")
+    GuardaHojaPlat ("PLAT. VINA DEL MAR")
+    GuardaHojaPlat ("PLATAFORMA 1")
+    GuardaHojaPlat ("PLATAFORMA 10")
+    GuardaHojaPlat ("PLATAFORMA 2")
+    GuardaHojaPlat ("Plataforma Central")
+    'GuardaHoja ("(en blanco)")
+End Sub
+
+Sub CreaHojaPlat(ByVal nameh As String)
+
+    Sheets("DATOS").Select
+    Range("A1").Select
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.AutoFilter
+    ActiveSheet.Range("$A$1:$S$5000").AutoFilter Field:=16, Criteria1:=nameh
+    
+    Rows("1:1").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.SpecialCells(xlCellTypeVisible).Select
+    Selection.Copy
+    Sheets.Add After:=Sheets(Sheets.Count)
+    Sheets(Sheets.Count).Name = nameh
+    Range("A3").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("P3:P4").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Range("A1").Select
+    Selection.PasteSpecial Paste:=xlPasteAll, Operation:=xlNone, SkipBlanks:= _
+        False, Transpose:=True
+    '--------------------------------------------------- Formato de Fechas
+    Range("C4").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.NumberFormat = "m/d/yyyy"
+    Selection.Copy
+    Range("D4").Select
+    Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+    Selection.Copy
+    Range("H4").Select
+    Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, _
+        SkipBlanks:=False, Transpose:=False
+    Application.CutCopyMode = False
+
+    ActiveWindow.Zoom = 90
+    Cells.Select
+    Cells.EntireColumn.AutoFit
+    Range("A1").Select
+End Sub
+
+Sub GuardaHojaPlat(ByVal nameh As String)
+    book1 = "Empresas - Genera Plataformas.xlsm"
+    book2 = nameh & ".xlsx"
+    Windows(book1).Activate
+    path0 = Application.ActiveWorkbook.Path
+    Workbooks.Add
+    ActiveWorkbook.SaveAs Filename:=path0 & "\" & book2, _
+    FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+    
+    Windows(book1).Activate
+    Sheets(nameh).Select
+    Sheets(nameh).Move Before:=Workbooks(book2).Sheets(1)
+    
+    Windows(book2).Activate
+    Application.DisplayAlerts = False
+    Sheets("Hoja1").Select
+    ActiveWindow.SelectedSheets.Delete
+    Sheets("Hoja2").Select
+    ActiveWindow.SelectedSheets.Delete
+    Sheets("Hoja3").Select
+    ActiveWindow.SelectedSheets.Delete
+    Application.DisplayAlerts = True
+    
+    ActiveWorkbook.Save
+    ActiveWindow.Close
+End Sub
+

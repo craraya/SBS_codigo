@@ -1,0 +1,928 @@
+
+Sub Seguimiento()
+'
+  '-------------------------------- Macro1 Crea Banco Comercial
+  fecha = "01.09.14"
+  folderPath = Application.ActiveWorkbook.Path
+  libroSeg = ActiveWorkbook.Name
+  libroBcoCom = "Reporte Semanal IN Bco. Comercial - " & fecha & " - Bco Comercial.xlsx"
+  libroBTX = "Reporte Semanal IN Bco. Comercial - " & fecha & " - BTX.xlsx"
+  libroEmpresarios = "Reporte Semanal IN Bco. Comercial - " & fecha & " - Empresarios.xlsx"
+  libroEmpresas = "Reporte Semanal IN Bco. Comercial - " & fecha & " - Empresas.xlsx"
+  libroFACLEA = "Reporte Semanal IN Bco. Comercial - " & fecha & " - FAC&LEA.xlsx"
+  libroGEmp = "Reporte Semanal IN Bco. Comercial - " & fecha & " - Grandes Empresas.xlsx"
+  libroInmob = "Reporte Semanal IN Bco. Comercial - " & fecha & " - Inmobiliaria.xlsx"
+  libroMarketing = "Reporte Semanal IN Bco. Comercial - " & fecha & " - Marketing.xlsx"
+  libroMIPE = "Reporte Semanal IN Bco. Comercial - " & fecha & " - MIPE.xlsx"
+  
+  'Empresarios path0:=folderPath, libro0:=libroSeg, libro:=libroEmpresarios      ' Enviar 13:00
+  Empresas path0:=folderPath, libro0:=libroSeg, libro:=libroEmpresas            ' Enviar 16:00
+  BTX path0:=folderPath, libro0:=libroSeg, libro:=libroBTX                     ' Enviar 16:30
+  Fact_Lea path0:=folderPath, libro0:=libroSeg, libro:=libroFACLEA
+  Marketing path0:=folderPath, libro0:=libroSeg, libro:=libroMarketing
+  BcoComercial path0:=folderPath, libro0:=libroSeg, libro:=libroBcoCom
+  Grandes_Empresas path0:=folderPath, libro0:=libroSeg, libro:=libroGEmp
+  Inmobiliaria path0:=folderPath, libro0:=libroSeg, libro:=libroInmob
+  Microempresario path0:=folderPath, libro0:=libroSeg, libro:=libroMIPE
+
+End Sub
+
+Sub BcoComercial(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Banco Comercial
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=61, _
+  Criteria1:=Array("EMPRESAS", "GRANDES EMPRESAS", "INMOBILIARIA"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("IN_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("IN_V_Eje").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("IN_V_Cli").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("IN_Comite Campañas").Copy Before:=Workbooks(libro).Sheets(5)
+  Windows(libro0).Activate
+  Sheets("IN_Literales").Copy Before:=Workbooks(libro).Sheets(6)
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("IN_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_V_Cli").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_Comite Campañas").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  ActiveWorkbook.Save
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub BTX(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para BTX
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=53, _
+  Criteria1:=Array("Eje BTX", "Call Center"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("BTX_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("BTX_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("BTX_V_Eje").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("BTX_V_Estados").Copy Before:=Workbooks(libro).Sheets(5)
+  Windows(libro0).Activate
+  Sheets("BTX_Literales").Copy Before:=Workbooks(libro).Sheets(6)
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+        
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("BTX_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("BTX_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("BTX_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("BTX_V_Estados").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("BTX_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+
+  ActiveWorkbook.Save
+  
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Empresarios(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Empresarios
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=61, _
+  Criteria1:=Array("EMPRENDEDORES", "EMPRESARIOS"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("EPM1_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("EPM2_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("EPM3_V_Eje").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("EPM_Literales").Copy Before:=Workbooks(libro).Sheets(5)
+
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("EPM1_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EPM2_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EPM3_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EPM_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  ActiveWorkbook.Save
+
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Empresas(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Empresas
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=61, Criteria1:="EMPRESAS"
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("EM1_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("EM2_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("EM3_V_Eje").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("EM_Literales").Copy Before:=Workbooks(libro).Sheets(5)
+
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+        
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("EM1_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EM2_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EM3_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EM_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+
+  ActiveWorkbook.Save
+
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Fact_Lea(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para factoring y leasing
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=53, _
+  Criteria1:=Array("Eje Factoring", "Eje Leasing", "Eje Leasing Convenios"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  Selection.PasteSpecial Paste:=xlPasteFormats, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("FCT&LEA_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("FCT&LEA_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("FCT&LEA_V_Eje").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("FCT_Literales").Copy Before:=Workbooks(libro).Sheets(5)
+
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+  
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("FCT&LEA_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("FCT&LEA_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("FCT&LEA_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("FCT_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  ActiveWorkbook.Save
+  
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Grandes_Empresas(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Grandes Empresas
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=61, _
+  Criteria1:=Array("GRANDES EMPRESAS"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("EG1_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("EG2_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("EG3_V_Eje").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("EG_Literales").Copy Before:=Workbooks(libro).Sheets(5)
+
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("EG1_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EG2_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EG3_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("EG_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  ActiveWorkbook.Save
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Inmobiliaria(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Inmobiliaria
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=61, _
+  Criteria1:=Array("INMOBILIARIA"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("INM1_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("INM2_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("INM3_V_Eje").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("INM_Literales").Copy Before:=Workbooks(libro).Sheets(5)
+
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+        
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("INM1_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("INM2_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("INM3_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("INM_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  ActiveWorkbook.Save
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Marketing(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Marketing
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Copy Before:=Workbooks(libro).Sheets(1)
+  Windows(libro0).Activate
+  Sheets("IN_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("IN_V_Eje").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("IN_V_Cli").Copy Before:=Workbooks(libro).Sheets(4)
+  Windows(libro0).Activate
+  Sheets("IN_Comite Campañas").Copy Before:=Workbooks(libro).Sheets(5)
+  Windows(libro0).Activate
+  Sheets("IN_Literales").Copy Before:=Workbooks(libro).Sheets(6)
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+  Application.DisplayAlerts = True
+  
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("IN_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_V_Eje").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_V_Cli").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_Comite Campañas").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("IN_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+
+  ActiveWorkbook.Save
+  
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+
+Sub Microempresario(ByVal path0 As String, ByVal libro0 As String, ByVal libro As String)
+  '-------------------------------- Para Microempresario
+  Workbooks.Add
+  ActiveWorkbook.SaveAs Filename:=path0 & "\" & libro, _
+  FileFormat:=51, Password:="", WriteResPassword:="", ReadOnlyRecommended:=False, CreateBackup:=False
+  
+  Windows(libro).Activate
+  Sheets.Add After:=Sheets(Sheets.Count)
+  Sheets(Sheets.Count).Name = "Base Seguimiento"
+  Windows(libro0).Activate
+  Sheets("Base Seguimiento").Select
+  Selection.AutoFilter
+  ActiveSheet.Range("$A$2:$BV$50000").AutoFilter Field:=61, _
+  Criteria1:=Array("MICROEMPRESARIOS", "MICROEMPRESAS"), Operator:=xlFilterValues
+  Rows("2:2").Select
+  Range(Selection, Selection.End(xlDown)).Select
+  Selection.SpecialCells(xlCellTypeVisible).Select
+  Selection.Copy
+  Windows(libro).Activate
+  Sheets("Base Seguimiento").Select
+  Range("A2").Select
+  Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+  
+  Windows(libro0).Activate
+  Sheets("MIPE_V_Global").Copy Before:=Workbooks(libro).Sheets(2)
+  Windows(libro0).Activate
+  Sheets("MIPE_V_Plat").Copy Before:=Workbooks(libro).Sheets(3)
+  Windows(libro0).Activate
+  Sheets("MIPE_Literales").Copy Before:=Workbooks(libro).Sheets(4)
+  
+  '-------------------------------- Eliminamos las hojas sobrantes
+  Windows(libro).Activate
+  Application.DisplayAlerts = False
+  Sheets("Hoja1").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja2").Select
+  ActiveWindow.SelectedSheets.Delete
+  Sheets("Hoja3").Select
+  ActiveWindow.SelectedSheets.Delete
+        
+  '--------------------------- Actualizamos las tablas dinamicas
+  Sheets("MIPE_V_Global").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+        
+  Sheets("MIPE_V_Plat").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  Sheets("MIPE_Literales").Select
+  Range("A14").Select
+  ActiveSheet.PivotTables("Tabla dinámica1").ChangePivotCache ActiveWorkbook. _
+        PivotCaches.Create(SourceType:=xlDatabase, SourceData:="'Base Seguimiento'!$A$2:$BV$50000" _
+        , Version:=xlPivotTableVersion12)
+  ActiveSheet.PivotTables("Tabla dinámica1").SaveData = True
+  ActiveSheet.PivotTables("Tabla dinámica1").EnableDrilldown = True
+  
+  ActiveWorkbook.Save
+  '------------------ Protegemos y ocultamos la hoja: "Base Seguimiento"
+  Sheets("Base Seguimiento").Select
+    Cells.Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+    With Selection.Font
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = 0
+    End With
+
+  ActiveSheet.Protect Password:="septiembre"
+  ActiveWindow.SelectedSheets.Visible = False
+    
+  '------------------- Guardamos y cerramos
+  ActiveWorkbook.Save
+  ActiveWindow.Close
+End Sub
+

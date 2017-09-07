@@ -1,0 +1,46 @@
+Sub CorreoLotus()
+    'Archivo adjunto
+    Fileh = "U:\02 - CAMPAÑAS\2016-01-25 - BCI Te Respalda - Prepara el Verano\Empresas\BE CENTRAL\PLATAFORMA 1.xlsx"
+    'Enviar Correo
+    'Inicia Sesion de Lotus Notes
+    Set Session = CreateObject("Lotus.NotesSession")
+    'Ingrsa Automaticamente la Contraseña del Correo
+    Call Session.Initialize("Caraya")
+    'Abre la Base de Datos de Correos de Notes (acá va la direccion donde esta la base de lotus notes)
+    Set Maildb = Session.GETDATABASE("", "U:\Lotus\Notes8.x\Data\Mail15\caaraav.nsf")
+    If Not Maildb.IsOpen = True Then
+        Call Maildb.Open
+    End If
+    'Crea el documento del Correo
+    Set MailDoc = Maildb.CREATEDOCUMENT
+    Call MailDoc.ReplaceItemValue("Form", "Memo")
+    'Establecer el Destinatario
+    'Call MailDoc.ReplaceItemValue("SendTo", "phormab@bci.cl")
+    Call MailDoc.ReplaceItemValue("SendTo", "caaraav@bci.cl")
+    'Establece el Tema
+    Call MailDoc.ReplaceItemValue("Subject", "Prueba correo automático")
+    'Crea y Configuara en Contenido del Cuerpo del Correo
+    Set Body = MailDoc.CREATERICHTEXTITEM("Body")
+    ' Cuerpo del correo
+    Call Body.AppendText("Estimado.")
+    Call Body.ADDNEWLINE(2)
+    Call Body.AppendText("Adjunto los Leads de la Plataforma correspondiente.")
+    Call Body.ADDNEWLINE(2)
+    Call Body.EMBEDOBJECT(1454, "", Fileh, "Attachment")
+    Call Body.ADDNEWLINE(2)
+    Call Body.AppendText("Saludos.")
+    Call Body.ADDNEWLINE(1)
+    Call Body.AppendText("Equipo de Marketing Bco Comercial.")
+    'Call Body.ADDNEWLINE(2)
+        'Crea el Archivo Adjunto al Correo
+    'Call Body.EMBEDOBJECT(1454, "", "C:Archivo a enviar.xls", "Attachment")
+    'Envia el Correo
+    'Obtiene la Direccion de correo de la carpeta Enviados
+    Call MailDoc.ReplaceItemValue("PostedDate", Now())
+    Call MailDoc.SEND(False)
+    'Clean Up
+    Set Maildb = Nothing
+    Set MailDoc = Nothing
+    Set Body = Nothing
+    Set Session = Nothing
+End Sub

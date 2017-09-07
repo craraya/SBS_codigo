@@ -1,0 +1,7 @@
+Se generan las plataformas y los regionales para:
+ - Emprendedores
+ - Empresarios
+ - Empresas
+ - Grandes Empresas
+ - Inmobiliaria
+ - Leasing y Factoring

@@ -1,0 +1,72 @@
+Sub orden_archivo()
+'   ------------------------------------------------- Ordena Archivo
+
+    Windows("Empresas - Genera Plataformas.xlsx").Activate
+    Sheets("DATOS").Select
+    Columns("B:B").Select
+    Selection.Delete
+    Columns("BN:BN").Select
+    Selection.Cut
+    Columns("F:F").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("K:K").Select
+    Selection.Cut
+    Columns("G:G").Select
+    Selection.Insert Shift:=xlToRight
+    ActiveWindow.ScrollColumn = 5
+    ActiveWindow.ScrollColumn = 6
+    Columns("L:L").Select
+    Selection.Cut
+    Columns("H:H").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("R:R").Select
+    Selection.Cut
+    Columns("I:I").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("T:T").Select
+    Selection.Cut
+    Columns("J:J").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("AR:AR").Select
+    Selection.Cut
+    Columns("K:K").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("AU:AU").Select
+    Selection.Cut
+    Columns("L:L").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("BI:BK").Select
+    Selection.Cut
+    Columns("M:M").Select
+    Selection.Insert Shift:=xlToRight
+    Columns("BM:BM").Select
+    Selection.Cut
+    Columns("P:P").Select
+    Selection.Insert Shift:=xlToRight
+    'Columns("Q:Q").Select
+    
+    Columns("BQ:BQ").Select
+    Selection.Cut
+    Columns("H:H").Select
+    Selection.Insert Shift:=xlToRight
+
+    Columns("BR:BS").Select
+    Selection.Cut
+    Columns("R:R").Select
+    Selection.Insert Shift:=xlToRight
+    
+    Columns("T:T").Select
+    
+    Range(Selection, Selection.End(xlToRight)).Select
+    Selection.Delete Shift:=xlToLeft
+
+    Cells.Select
+    Cells.EntireColumn.AutoFit
+    
+    Range("K1").Select
+    ActiveCell.FormulaR1C1 = "Oferta MM$"
+    
+    Range("M1").Select
+    ActiveCell.FormulaR1C1 = "Curse MM$"
+    
+End Sub

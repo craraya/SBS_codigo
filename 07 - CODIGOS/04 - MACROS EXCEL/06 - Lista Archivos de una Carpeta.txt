@@ -1,0 +1,36 @@
+Sub ListarFicherosCarpeta()
+'www.excelforo.com
+Dim Ruta As String
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'Creamos el objeto FileSystemObject que
+'proporciona acceso al sistema de archivos de un equipo
+Set fso = CreateObject("Scripting.FileSystemObject")
+'Indicamos la ruta de donde vamos a obtener
+'los ficheros, en este caso D:\BancoFotos
+Ruta = Application.ActiveWorkbook.Path
+'definimos dos variables que necesitaremos,
+'para recuperar el nombre de la carpeta, y los ficheros que haya dentro
+Set Carpeta = fso.GetFolder(Ruta)
+Set ficheros = Carpeta.Files
+'damos un título en negrita para la celda A1
+With Range("A1")
+    .Value = "Ficheros de la carpeta " & Ruta
+    .Font.Bold = True
+End With
+'escribimos los ficheros, a partir de A2
+Range("A2").Select
+For Each archivo In ficheros
+    'escribimos el nombre del fichero
+    ActiveCell = archivo.Name
+    'bajamos una fila
+    ActiveCell.Offset(1, 0).Select
+Next archivo
+ActiveCell.EntireColumn.AutoFit
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+'Limpiamos los objetos y variables definidas
+Set fso = Nothing
+Set Carpeta = Nothing
+Set ficheros = Nothing
+  
+Application.ScreenUpdating = True
+End Sub
